@@ -19,23 +19,25 @@ export default {
     })
   },
   watch: {
-    expression () {
-      this.drawGraph()
+    expression (val) {
+      this.drawGraph(val)
     }
   },
   mounted () {
-    this.drawGraph()
+    this.drawGraph('x=0')
+    this.drawGraph(this.expression)
   },
   methods: {
-    drawGraph () {
-      let self = this
+    drawGraph (expression) {
       let functionPlot = require('function-plot')
-      if (self.expression) {
+      if (expression) {
         try {
           functionPlot({
             target: `#graph-${this.uuid}`,
             data: [{
-              fn: self.expression
+              fn: expression,
+              sampler: 'builtIn',
+              graphType: 'polyline'
             }]
           })
         } catch (err) {
