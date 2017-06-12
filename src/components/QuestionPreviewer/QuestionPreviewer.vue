@@ -4,17 +4,31 @@
       <span v-if="token.type=='text'">
         {{token.value}}
       </span>
+      <span v-if="token.type=='newline'">
+        <br>
+      </span>
+      <span v-if="token.type=='image'">
+        <img :src="token.value"/>
+      </span>
       <equation-previewer v-if="token.type=='equation'" :expression="token.value" mode="latex">
       </equation-previewer>
+      <graph-previewer v-if="token.type=='graph'" :expression="token.value">
+      </graph-previewer>
+      <span v-else>
+        <component :is="token.type">{{token.value}}</component>
+      </span>
+      
     </span>
   </div>
 </template>
 <script>
 import {EquationPreviewer} from './../EquationPreviewer'
+import {GraphPreviewer} from './../GraphPreviewer'
 export default {
   props: ['text'],
   components: {
-    EquationPreviewer
+    EquationPreviewer,
+    GraphPreviewer
   },
   data () {
     return {
@@ -25,16 +39,18 @@ export default {
       // let self = this
       let match
       let results = []
-      let regex = /(?:<([^>]+)>([^<]*)<\/\1>|([^\s<>]+(?:[\s]*[^\s<>]+)*))/g
+      let regex = /(?:<([^>]+)>([^<]*)<\/\1>|([^\s<>]+(?:[^\s<>]+)*)|(\n))/g
       while ((match = regex.exec(this.text)) !== null) {
         console.log(match)
         let token = {}
         if (match[1]) {
           token.type = match[1]
-        } else {
+        } else if (match[3]) {
           token.type = 'text'
+        } else if (match[4]) {
+          token.type = 'newline'
         }
-        token.value = match[2] || match[3]
+        token.value = match[2] || match[3] || match[4]
         results.push(token)
       }
       return results

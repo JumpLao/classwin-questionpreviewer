@@ -14,6 +14,8 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
+    "d3": "^3.5.17",
+    "function-plot": "^1.17.3",
     "katex": "^0.7.1",
     "mathjax": "^2.7.1",
     "mathjs": "^3.13.3",
